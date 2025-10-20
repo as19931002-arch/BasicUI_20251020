@@ -26,6 +26,7 @@ import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableStateSetOf
@@ -77,7 +78,15 @@ fun Main(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     // 使用 remember 儲存 MediaPlayer 實例
     var mper: MediaPlayer? by remember { mutableStateOf(null) }
-
+    // 使用 DisposableEffect 來管理 MediaPlayer 的生命週期
+    // 當 Main Composable 離開組合時，會執行 onDispose 區塊
+    DisposableEffect(Unit) { // Unit 作為 key 表示這個 effect 只會執行一次
+        onDispose {
+            // 釋放 MediaPlayer 資源，避免記憶體洩漏
+            mper?.release()
+            mper = null
+        }
+    }
     Column (
         modifier = modifier
             .fillMaxSize() // 1. 設定全螢幕（填滿父容器）
@@ -157,7 +166,8 @@ fun Main(modifier: Modifier = Modifier) {
                 }
                 Toast.makeText(
                     context,
-                    test="Compose  按鈕被點擊了!", duration=Toast.LENGTH_SHORT
+                    "Compose  按鈕被點擊了!",
+                    Toast.LENGTH_SHORT
                 ).show()
             }
         ) {
@@ -174,7 +184,7 @@ fun Main(modifier: Modifier = Modifier) {
                     mper?.start() //開始播放
 
                 },
-                    modifier = Modifie
+                    modifier=Modifier
                     .fillMaxWidth(0.33f)
                     .fillMaxHeight(0.8f),
                     colors = buttonColors(Color.Green)
