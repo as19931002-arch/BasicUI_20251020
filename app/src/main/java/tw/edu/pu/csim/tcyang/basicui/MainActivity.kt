@@ -11,6 +11,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -22,6 +23,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -45,6 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import tw.edu.pu.csim.tcyang.basicui.ui.theme.BasicUITheme
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,6 +80,7 @@ fun Main(modifier: Modifier = Modifier) {
     // 取得當前的 Context
     val context = LocalContext.current
     // 使用 remember 儲存 MediaPlayer 實例
+    var toggleAnimal by remember { mutableStateOf(1) } // 0: 鴨子, 1: 企鵝
     var mper: MediaPlayer? by remember { mutableStateOf(null) }
     // 使用 DisposableEffect 來管理 MediaPlayer 的生命週期
     // 當 Main Composable 離開組合時，會執行 onDispose 區塊
@@ -216,10 +220,30 @@ fun Main(modifier: Modifier = Modifier) {
 
             Spacer(modifier = Modifier.size(10.dp))
 
-            Button(onClick = {
-            }) {
+            Button(onClick = { /* 結束App的功能 */ }
+            ) {
                 Text(text = "結束App")
             }
+// 動物切換按鈕
+            Button(
+                onClick = {
+                    toggleAnimal = if (toggleAnimal == 0) 1 else 0
+                    val name = if (toggleAnimal == 0) "鴨子" else "企鵝"
+                    Toast.makeText(context, "$name 被選中", Toast.LENGTH_SHORT).show()
+                },
+                colors = ButtonDefaults.buttonColors(Color.Transparent),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(0.2f)
+            ) {
+                Image(
+                    painter = painterResource(id = Animals[toggleAnimal]),
+                    contentDescription = "動物切換按鈕",
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+
         }
-    }
-}
+        }
+
+            }
